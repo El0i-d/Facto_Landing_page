@@ -14,19 +14,9 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
+    const count = data?.numberOfSubmissions ?? 47;
 
-    // Renvoie toute la réponse pour déboguer
-    const count =
-      data?.submissionsCount ??
-      data?.data?.submissionsCount ??
-      data?.totalSubmissions ??
-      data?.data?.totalSubmissions ??
-      null;
-
-    res.status(200).json({
-      count: count ?? 47,
-      debug: data  // ← à retirer une fois que ça marche
-    });
+    res.status(200).json({ count });
 
   } catch (err) {
     res.status(200).json({ count: 47, error: err.message });
