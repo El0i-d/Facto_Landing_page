@@ -509,13 +509,9 @@ document.querySelectorAll('.faq-item').forEach(item=>{
   }
 })();
 
-// ── COMPTEUR AUTOMATIQUE TALLY ──
-// Tally n'expose pas une API publique de comptage directe,
-// donc on fetch la page de résultats et on lit le nombre de soumissions.
-// Fallback : affiche le dernier chiffre connu si le fetch échoue.
+// ── COMPTEUR AUTOMATIQUE ──
 (function(){
-  var FALLBACK = 47; // ← met à jour ce chiffre manuellement si besoin
-  var FORM_ID  = "D4a0ZZ";
+  var FALLBACK = 47;
 
   function setCounters(n){
     ["counter-hero","counter-strip","counter-cta"].forEach(function(id){
@@ -524,19 +520,10 @@ document.querySelectorAll('.faq-item').forEach(item=>{
     });
   }
 
-  // Tally API publique : https://api.tally.so/forms/<id>
-  fetch("https://api.tally.so/forms/"+FORM_ID)
+  fetch("/api/count")
     .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
-    .then(function(data){
-      // Le champ peut être data.submissionsCount ou data.data.submissionsCount selon la version
-      var count = (data && data.submissionsCount) ||
-                  (data && data.data && data.data.submissionsCount) ||
-                  FALLBACK;
-      setCounters(count);
-    })
-    .catch(function(){
-      setCounters(FALLBACK);
-    });
+    .then(function(data){ setCounters(data.count || FALLBACK); })
+    .catch(function(){ setCounters(FALLBACK); });
 })();
 
 </script>
