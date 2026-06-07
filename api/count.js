@@ -9,12 +9,25 @@ export default async function handler(req, res) {
       }
     });
 
-    if (!response.ok) throw new Error('Tally API error: ' + response.status);
+    if (!response.ok) {
+      return res.status(200).json({ count: 47, error: 'Tally status ' + response.status });
+    }
 
     const data = await response.json();
-    const count = data?.submissionsCount ?? data?.data?.submissionsCount ?? 0;
 
-    res.status(200).json({ count });
+    // Renvoie toute la réponse pour déboguer
+    const count =
+      data?.submissionsCount ??
+      data?.data?.submissionsCount ??
+      data?.totalSubmissions ??
+      data?.data?.totalSubmissions ??
+      null;
+
+    res.status(200).json({
+      count: count ?? 47,
+      debug: data  // ← à retirer une fois que ça marche
+    });
+
   } catch (err) {
     res.status(200).json({ count: 47, error: err.message });
   }
